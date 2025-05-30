@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PhotoPrintCalculator")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5dde568935c25d17f68eb192ea8a52716e4b4f9e")]
 [assembly: System.Reflection.AssemblyProductAttribute("PhotoPrintCalculator")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PhotoPrintCalculator")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

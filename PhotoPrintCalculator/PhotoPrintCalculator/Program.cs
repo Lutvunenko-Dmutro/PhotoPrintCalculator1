@@ -3,14 +3,14 @@ namespace PhotoPrintCalculator
     internal static class Program
     {
         /// <summary>
-        ///  The main entry point for the application.
+        /// Головна точка входу у застосунок.
         /// </summary>
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
+            // Ініціалізація конфігурації застосунку (шрифти, DPI тощо)
             ApplicationConfiguration.Initialize();
+            // Запуск головної форми програми
             Application.Run(new Form1());
         }
     }

@@ -1,101 +1,96 @@
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace PhotoPrintCalculator
 {
     public partial class Form1 : Form
     {
-        // Вартість фотографії для кожного розміру
-        private double photoPrice = 0.0;
+        // Константа знижки, застосовується якщо кількість фотографій > 20
+        private const double discount = 0.1;
 
-        // Знижка, надається, якщо кількість фотографій перевищує 20
-        private double discount = 0.1;
+        // Словник для зберігання відповідності RadioButton -> (розмір, ціна)
+        private readonly Dictionary<RadioButton, (string size, double price)> photoOptions;
 
         public Form1()
         {
             InitializeComponent();
+            // Ініціалізація словника розмірів та цін
+            photoOptions = new Dictionary<RadioButton, (string, double)>
+            {
+                { radioButton1, ("9x12", 1.5) },
+                { radioButton2, ("12x15", 2.0) },
+                { radioButton3, ("18x24", 3.0) }
+            };
         }
 
+        /// <summary>
+        /// Обробник натискання кнопки "Розрахувати вартість".
+        /// Перевіряє вибір розміру, кількість, викликає розрахунок та показує результат.
+        /// </summary>
         private void button1_Click(object sender, EventArgs e)
         {
-            // Вартість однієї фотографії
-            double totalCost = 0.0;
+            string size = null;
+            double photoPrice = 0;
 
-            // Визначаємо вартість фотографії в залежності від обраного розміру
-            if (radioButton1.Checked)
-                photoPrice = 1.5;
-            else if (radioButton2.Checked)
-                photoPrice = 2.0;
-            else if (radioButton3.Checked)
-                photoPrice = 3.0;
+            // Визначаємо вибраний розмір та ціну
+            foreach (var kvp in photoOptions)
+            {
+                if (kvp.Key.Checked)
+                {
+                    size = kvp.Value.size;
+                    photoPrice = kvp.Value.price;
+                    break;
+                }
+            }
 
-            // Кількість фотографій
+            // Якщо розмір не вибрано — повідомлення про помилку
+            if (size == null)
+            {
+                MessageBox.Show("Оберіть розмір фотографії!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             int quantity = (int)numericUpDown1.Value;
+            // Перевірка кількості
+            if (quantity <= 0)
+            {
+                MessageBox.Show("Введіть кількість фотографій більше нуля!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
-            // Розрахунок вартості замовлення
-            totalCost = photoPrice * quantity;
+            // Розрахунок вартості та перевірка наявності знижки
+            var (totalCost, hasDiscount) = CalculateOrder(photoPrice, quantity);
 
-            // Перевірка наявності знижки
-            if (quantity > 20)
-                totalCost *= (1 - discount);
+            // Формування результату для виводу
+            string result = $"Розмір: {size}\n" +
+                            $"Кількість: {quantity}\n" +
+                            $"Ціна за 1 шт: ${photoPrice:0.00}\n";
+            if (hasDiscount)
+                result += "Знижка: 10%\n";
+            result += $"Сума до сплати: ${totalCost:0.00}";
 
-            // Вивід результату
-            MessageBox.Show("Вартість замовлення: $" + totalCost.ToString("0.00"), "Результат", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // Вивід результату користувачу
+            MessageBox.Show(result, "Результат", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void label2_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Розраховує загальну вартість замовлення та визначає, чи застосовано знижку.
+        /// </summary>
+        /// <param name="price">Ціна за одну фотографію</param>
+        /// <param name="qty">Кількість фотографій</param>
+        /// <returns>Кортеж: (загальна сума, чи застосовано знижку)</returns>
+        private (double total, bool discountApplied) CalculateOrder(double price, int qty)
         {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void radioButton1_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void radioButton3_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void radioButton2_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pictureBox2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pictureBox3_Click(object sender, EventArgs e)
-        {
-
+            double total = price * qty;
+            bool discountApplied = false;
+            // Якщо кількість > 20, застосовується знижка
+            if (qty > 20)
+            {
+                total *= (1 - discount);
+                discountApplied = true;
+            }
+            return (total, discountApplied);
         }
     }
 }
